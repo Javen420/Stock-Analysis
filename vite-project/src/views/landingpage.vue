@@ -7,7 +7,7 @@
 
 <script setup>
 </script>
-
+<!-- dk what to put here, maybe popular stocks + abit of profile, if logged in -->
 <style scoped>
 .landing-page {
   display: flex;
