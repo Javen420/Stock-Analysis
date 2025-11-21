@@ -1,18 +1,51 @@
-import mongoose from 'mongoose';
+import mongoose from "mongoose";
 
-const portfolioSchema = new mongoose.Schema({
-  user: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
-  portfolio_ID: { type: varchar, required: true, unique: true},
-  portfolio_name: { type: varchar, required: true, unique: false},
-  stocks: [
-    {
-      symbol: String,
-      name: String,
-      shares: Number,
-      boughtAt: { type: Date, default: Date.now }
-    } 
-  ]
+const PortfolioStockSchema = new mongoose.Schema({
+  stockId: { 
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "Stock",
+    required: true
+  },
+  shares: { type: Number, required: true },
+  averageCost: { type: Number, required: true }
+}, { _id: false });
+
+const PortfolioSchema = new mongoose.Schema({
+  userId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "User",
+    required: true
+  },
+
+  name: {
+    type: String,
+    required: true
+  },
+
+  description: {
+    type: String,
+    default: ""
+  },
+
+  // Portfolio holds references to stock documents
+  holdings: {
+    type: [PortfolioStockSchema],
+    default: []
+  },
+
+  // Optional: used for charts and analytics
+  history: [{
+    date: { type: Date, default: Date.now },
+    totalValue: Number
+  }],
+
+  createdAt: {
+    type: Date,
+    default: Date.now
+  }
 });
 
-const Portfolio = mongoose.model('Portfolio', portfolioSchema);
-export default Portfolio;
+// Prevent user from making two portfolios with the same name
+PortfolioSchema.index({ userId: 1, name: 1 }, { unique: true });
+
+export default mongoose.model("Portfolio", PortfolioSchema);
