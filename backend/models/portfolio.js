@@ -2,13 +2,15 @@ import mongoose from 'mongoose';
 
 const portfolioSchema = new mongoose.Schema({
   user: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
+  portfolio_ID: { type: varchar, required: true, unique: true},
+  portfolio_name: { type: varchar, required: true, unique: false},
   stocks: [
     {
       symbol: String,
       name: String,
       shares: Number,
       boughtAt: { type: Date, default: Date.now }
-    }
+    } 
   ]
 });
 
