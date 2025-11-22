@@ -21,26 +21,9 @@ const StockSchema = new mongoose.Schema({
   industry: String,
   description: String,
   logoUrl: String,
-
-  // Fundamentals (update monthly/quarterly)
-  marketCap: Number,
-  peRatio: Number,
-  psRatio: Number,
-  pbRatio: Number,
-  freeCashFlow: Number,
-  revenue: Number,
-  ebitda: Number,
-  dividendYield: Number,
-
-  // Cached short-term price
-  cachedPrice: Number,
-  priceLastUpdated: Date,
-
-  // Optional: store daily historic candles
-  history: [DailyPriceSchema],
-
-  lastFundamentalUpdate: Date
+  
 });
 
 export default mongoose.model("Stock", StockSchema);
+
 
