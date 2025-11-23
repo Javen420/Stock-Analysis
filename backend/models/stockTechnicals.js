@@ -1,5 +1,11 @@
 import mongoose from "mongoose";
 
+// For fundamentals use FMP or Finnhub (structured financials & key ratios).
+// For technicals either:
+// Use Alpha Vantage / Twelve Data endpoints, or
+// Fetch historical OHLC prices (from any provider) and compute indicators locally (recommended for control & higher throughput).
+// Compute technicals locally with libraries (Node or Python) to avoid external indicator rate-limits
+
 const AnalyticsSchema = new mongoose.Schema({
   stockId: {
     type: mongoose.Schema.Types.ObjectId,
