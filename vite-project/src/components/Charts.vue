@@ -1,0 +1,1 @@
+<!-- shows different charts, maybe like prediction, history, or for each stat? idk -->
