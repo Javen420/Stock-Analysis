@@ -6,12 +6,22 @@
       <router-link to="/about">About</router-link>
       <router-link to="/contact">Contact Us</router-link>
       <router-link to="/profile">Profile</router-link>
-      <router-link to="/login">Login</router-link>
+      <button @click="showLogin = true">Login</button>
+      <LoginModal v-model="showLogin" @success="onLoginSuccess" />
     </div>
   </nav>
 </template>
 
 <script>
+import { ref } from 'vue'
+import LoginModal from 'login.vue' // path relative to components
+const showLogin = ref(false)
+
+function onLoginSuccess(user) {
+  // update local state / store, navigate, etc.
+  console.log('logged in user', user)
+  // e.g., emit an event or update a global store (Pinia) / router push
+}
 export default {
   name: "NavBar",
 }
