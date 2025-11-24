@@ -2,44 +2,62 @@ import express from "express";
 import mongoose from "mongoose";
 import cors from "cors";
 import dotenv from "dotenv";
+import bcrypt from "bcryptjs";
+import jwt from "jsonwebtoken";
+import User from "./models/user.js";
 
-// Load .env variables
 dotenv.config();
 
 const app = express();
-
-// Middleware
 app.use(cors());
 app.use(express.json());
 
-// Connect to MongoDB using the environment variable
-mongoose
-  .connect(process.env.MONGO_URL)
-  .then(() => console.log("✅ MongoDB Connected"))
-  .catch((err) => console.error("❌ MongoDB Connection Error:", err));
+const JWT_SECRET = process.env.JWT_SECRET || "dev_secret_replace_in_prod";
 
-// Example Schema
-const UserSchema = new mongoose.Schema({
-  name: String,
-  email: String
+export default function auth(req, res, next) {
+  const hdr = req.headers.authorization;
+  if (!hdr) return res.status(401).json({ error: "No token" });
+  const token = hdr.split(" ")[1];
+  try {
+    req.user = jwt.verify(token, JWT_SECRET);
+    next();
+  } catch {
+    res.status(401).json({ error: "Invalid token" });
+  }
+}
+// POST /api/login
+app.post("/api/login", async (req, res) => {
+  try {
+    const { username, password } = req.body;
+    if (!username || !password) return res.status(400).json({ error: "Missing credentials" });
+
+    const user = await User.findOne({ username });
+    if (!user) return res.status(401).json({ error: "Invalid credentials" });
+
+    const match = await bcrypt.compare(password, user.password);
+    if (!match) return res.status(401).json({ error: "Invalid credentials" });
+
+    const token = jwt.sign({ id: user._id, username: user.username }, JWT_SECRET, { expiresIn: "8h" });
+    res.json({ token, user: { id: user._id, username: user.username, email: user.email } });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "Server error" });
+  }
 });
 
-const User = mongoose.model("User", UserSchema);
+// connect to Mongo and start server
+async function start() {
+  try {
+    await mongoose.connect(process.env.MONGO_URL);
+    console.log("✅ MongoDB Connected");
+    const PORT = process.env.PORT || 5000;
+    app.listen(PORT, () => {
+      console.log(`🚀 Server running on http://localhost:${PORT}`);
+    });
+  } catch (err) {
+    console.error("❌ MongoDB Connection Error:", err);
+    process.exit(1);
+  }
+}
 
-// Example GET Route
-app.get("/users", async (req, res) => {
-  const users = await User.find();
-  res.json(users);
-});
-
-// Example POST Route
-app.post("/users", async (req, res) => {
-  const newUser = await User.create(req.body);
-  res.json(newUser);
-});
-
-// Start server using PORT from .env, fallback to 5000
-const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => {
-  console.log(`🚀 Server running on http://localhost:${PORT}`);
-});
+start();``

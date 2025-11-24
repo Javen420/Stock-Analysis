@@ -27,7 +27,6 @@
 
 <script setup>
 import { ref, watch, onMounted } from 'vue'
-import { useRouter } from 'vue-router'
 
 const props = defineProps({
   modelValue: { type: Boolean, default: false } // v-model:visible
@@ -41,10 +40,8 @@ const username = ref('')
 const password = ref('')
 const loading = ref(false)
 const error = ref(null)
-const router = useRouter()
 
 onMounted(() => {
-  // optional: focus on mount for keyboard escape to work
   if (visible.value) document.querySelector('.modal')?.focus()
 })
 
@@ -70,7 +67,6 @@ async function submit() {
       loading.value = false
       return
     }
-    // store token and user
     localStorage.setItem('token', data.token)
     localStorage.setItem('user', JSON.stringify(data.user || {}))
     emit('success', data.user || null)
@@ -84,35 +80,12 @@ async function submit() {
 </script>
 
 <style scoped>
-.modal-backdrop {
-  position: fixed;
-  inset: 0;
-  background: rgba(0,0,0,0.4);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 1000;
-}
-.modal {
-  background: white;
-  padding: 1.25rem;
-  border-radius: 8px;
-  width: 320px;
-  box-shadow: 0 10px 30px rgba(0,0,0,0.2);
-  position: relative;
-}
-.close {
-  position: absolute;
-  right: 8px;
-  top: 8px;
-  border: none;
-  background: transparent;
-  font-size: 1.25rem;
-  cursor: pointer;
-}
-.form-group { margin-bottom: 0.75rem; }
-input { width: 100%; padding: 0.5rem; border: 1px solid #ccc; border-radius: 4px; }
+.modal-backdrop { position: fixed; inset: 0; background: rgba(0,0,0,0.4); display:flex; align-items:center; justify-content:center; z-index:1000; }
+.modal { background:white; padding:1.25rem; border-radius:8px; width:320px; box-shadow:0 10px 30px rgba(0,0,0,0.2); position:relative; }
+.close { position:absolute; right:8px; top:8px; border:none; background:transparent; font-size:1.25rem; cursor:pointer; }
+.form-group { margin-bottom:0.75rem; }
+input { width:100%; padding:0.5rem; border:1px solid #ccc; border-radius:4px; }
 .actions { display:flex; justify-content:flex-end; margin-top:0.5rem; }
-button[disabled] { opacity: 0.6; cursor: not-allowed; }
-.error { color: #b91c1c; margin-top: 0.5rem; }
+button[disabled] { opacity:0.6; cursor:not-allowed; }
+.error { color:#b91c1c; margin-top:0.5rem; }
 </style>
