@@ -1,57 +1,65 @@
 <template>
-  <nav class="navbar">
-    <div class="logo">My App</div>
-    <div class="links">
-      <router-link to="/">Home</router-link>
-      <router-link to="/about">About</router-link>
-      <router-link to="/contact">Contact Us</router-link>
-      <router-link to="/profile">Profile</router-link>
-      <button @click="showLogin = true">Login</button>
-      <LoginModal v-model="showLogin" @success="onLoginSuccess" />
+  <nav class="bg-blue-800 text-white px-6 py-3 flex items-center justify-between shadow-md">
+    <router-link to="/" class="text-xl font-bold tracking-wide hover:text-blue-200">
+      StockFinder
+    </router-link>
+
+    <div class="flex items-center gap-4">
+      <router-link to="/" class="hover:text-blue-200 transition-colors">Home</router-link>
+      <router-link v-if="loggedIn" to="/my-stocks" class="hover:text-blue-200 transition-colors">My Stocks</router-link>
+      <router-link v-if="loggedIn" to="/profile" class="hover:text-blue-200 transition-colors">Profile</router-link>
+
+      <template v-if="loggedIn">
+        <span class="text-blue-200 text-sm">{{ username }}</span>
+        <button
+          @click="logout"
+          class="bg-blue-600 hover:bg-blue-500 px-3 py-1 rounded text-sm transition-colors"
+        >
+          Logout
+        </button>
+      </template>
+      <button
+        v-else
+        @click="showLogin = true"
+        class="bg-blue-600 hover:bg-blue-500 px-3 py-1 rounded text-sm transition-colors"
+      >
+        Login
+      </button>
     </div>
+
+    <LoginModal v-model="showLogin" @success="onLoginSuccess" />
   </nav>
 </template>
 
-<script>
-import { ref } from 'vue'
-import LoginModal from 'login.vue' // path relative to components
+<script setup>
+import { ref, onMounted } from 'vue'
+import { useRouter } from 'vue-router'
+import LoginModal from './login.vue'
+
+const router = useRouter()
 const showLogin = ref(false)
+const loggedIn = ref(false)
+const username = ref('')
+
+onMounted(() => {
+  const token = localStorage.getItem('token')
+  const user = JSON.parse(localStorage.getItem('user') || '{}')
+  if (token && user.username) {
+    loggedIn.value = true
+    username.value = user.username
+  }
+})
 
 function onLoginSuccess(user) {
-  // update local state / store, navigate, etc.
-  console.log('logged in user', user)
-  // e.g., emit an event or update a global store (Pinia) / router push
+  loggedIn.value = true
+  username.value = user?.username || ''
 }
-export default {
-  name: "NavBar",
+
+function logout() {
+  localStorage.removeItem('token')
+  localStorage.removeItem('user')
+  loggedIn.value = false
+  username.value = ''
+  router.push('/')
 }
 </script>
-
-<style scoped>
-.navbar {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 1rem 2rem;
-  background-color: #1e40af;
-  color: white;
-}
-
-.logo {
-  font-size: 1.5rem;
-  font-weight: bold;
-}
-
-.links a,
-.links router-link {
-  margin-left: 1rem;
-  text-decoration: none;
-  color: white;
-  font-weight: 500;
-}
-
-.links a:hover,
-.links router-link:hover {
-  color: #cbd5e1;
-}
-</style>

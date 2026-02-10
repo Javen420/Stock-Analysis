@@ -3,16 +3,8 @@ import NavBar from './components/NavBar.vue'
 </script>
 
 <template>
-  <div>
+  <div class="min-h-screen bg-slate-50">
     <NavBar />
     <router-view />
   </div>
 </template>
-
-<style scoped>
-/* Optional global styles for App.vue */
-body {
-  margin: 0;
-  font-family: Arial, sans-serif;
-}
-</style>
