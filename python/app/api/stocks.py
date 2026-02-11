@@ -1,13 +1,9 @@
 # app/api/stocks.py
 from fastapi import APIRouter, HTTPException
-from pymongo import MongoClient
-from typing import List
+from app.core.mongo import db
 
 router = APIRouter()
 
-# Mongo connection
-client = MongoClient("mongodb://localhost:27017")
-db = client["stock_db"]
 prices_collection = db["stock_prices"]
 stocks_collection = db["stocks"]
 

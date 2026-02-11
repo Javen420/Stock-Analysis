@@ -2,7 +2,7 @@ import express from "express";
 import mongoose from "mongoose";
 import cors from "cors";
 import dotenv from "dotenv";
-import bcrypt from "bcryptjs";
+import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import User from "./models/user.js";
 import userRoutes from "./routes/UserRoutes.js";
@@ -17,7 +17,7 @@ app.use(express.json());
 
 const JWT_SECRET = process.env.JWT_SECRET || "dev_secret_replace_in_prod";
 
-export default function auth(req, res, next) {
+function auth(req, res, next) {
   const hdr = req.headers.authorization;
   if (!hdr) return res.status(401).json({ error: "No token" });
   const token = hdr.split(" ")[1];

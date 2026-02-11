@@ -8,7 +8,7 @@ router.get("/:id/watchlist", async (req, res) => {
   try {
     const user = await User.findById(req.params.id).select("watchlist");
     if (!user) return res.status(404).json({ error: "User not found" });
-    res.json(user.watchlist);
+    res.json({ watchlist: user.watchlist });
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: "Server error" });
@@ -32,7 +32,7 @@ router.put("/:id/watchlist", async (req, res) => {
     }
 
     await user.save();
-    res.json(user.watchlist);
+    res.json({ watchlist: user.watchlist });
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: "Server error" });
