@@ -5,6 +5,9 @@ import dotenv from "dotenv";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import User from "./models/user.js";
+import userRoutes from "./routes/UserRoutes.js";
+import portfolioRoutes from "./routes/PortfolioRoutes.js";
+import stockRoutes from "./routes/StockRoutes.js";
 
 dotenv.config();
 
@@ -64,6 +67,11 @@ app.post("/api/login", async (req, res) => {
     res.status(500).json({ error: "Server error" });
   }
 });
+
+// Mount route modules
+app.use("/api/users", auth, userRoutes);
+app.use("/api/portfolios", auth, portfolioRoutes);
+app.use("/api/stocks", stockRoutes);
 
 // connect to Mongo and start server
 async function start() {
