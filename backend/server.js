@@ -25,6 +25,26 @@ export default function auth(req, res, next) {
     res.status(401).json({ error: "Invalid token" });
   }
 }
+// POST /api/signup
+app.post("/api/signup", async (req, res) => {
+  try {
+    const { username, email, password } = req.body;
+    if (!username || !email || !password)
+      return res.status(400).json({ error: "Missing required fields" });
+
+    const exists = await User.findOne({ $or: [{ username }, { email }] });
+    if (exists) return res.status(409).json({ error: "Username or email already taken" });
+
+    const user = await User.create({ username, email, password });
+
+    const token = jwt.sign({ id: user._id, username: user.username }, JWT_SECRET, { expiresIn: "8h" });
+    res.status(201).json({ token, user: { id: user._id, username: user.username, email: user.email } });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "Server error" });
+  }
+});
+
 // POST /api/login
 app.post("/api/login", async (req, res) => {
   try {
