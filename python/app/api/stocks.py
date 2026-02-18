@@ -1,6 +1,7 @@
 # app/api/stocks.py
 from fastapi import APIRouter, HTTPException
 from app.core.mongo import db
+from app.services.stock_api import fetch_and_store_stock
 
 router = APIRouter()
 
@@ -11,10 +12,14 @@ stocks_collection = db["stocks"]
 def get_stock(symbol: str):
     symbol = symbol.upper()
 
-    # 1️⃣ Get stock info
+    # 1️⃣ Get stock info, auto-fetch from Alpha Vantage if not in DB
     stock = stocks_collection.find_one({"symbol": symbol})
     if not stock:
-        raise HTTPException(status_code=404, detail=f"Ticker '{symbol}' not found")
+        try:
+            fetch_and_store_stock(symbol)
+        except ValueError:
+            raise HTTPException(status_code=404, detail=f"Ticker '{symbol}' not found")
+        stock = stocks_collection.find_one({"symbol": symbol})
 
     # 2️⃣ Get price history from Mongo
     prices_cursor = prices_collection.find({"symbol": symbol}).sort("date", -1)
