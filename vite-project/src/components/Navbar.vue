@@ -18,16 +18,24 @@
           Logout
         </button>
       </template>
-      <button
-        v-else
-        @click="showLogin = true"
-        class="bg-blue-600 hover:bg-blue-500 px-3 py-1 rounded text-sm transition-colors"
-      >
-        Login
-      </button>
+      <template v-else>
+        <button
+          @click="showSignup = true"
+          class="border border-blue-400 hover:bg-blue-700 px-3 py-1 rounded text-sm transition-colors"
+        >
+          Sign Up
+        </button>
+        <button
+          @click="showLogin = true"
+          class="bg-blue-600 hover:bg-blue-500 px-3 py-1 rounded text-sm transition-colors"
+        >
+          Login
+        </button>
+      </template>
     </div>
 
     <LoginModal v-model="showLogin" @success="onLoginSuccess" />
+    <SignupModal v-model="showSignup" @success="onLoginSuccess" />
   </nav>
 </template>
 
@@ -35,9 +43,11 @@
 import { ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import LoginModal from './login.vue'
+import SignupModal from './signup.vue'
 
 const router = useRouter()
 const showLogin = ref(false)
+const showSignup = ref(false)
 const loggedIn = ref(false)
 const username = ref('')
 
