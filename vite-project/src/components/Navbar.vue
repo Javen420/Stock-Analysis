@@ -7,6 +7,7 @@
     <div class="flex items-center gap-4">
       <router-link to="/" class="hover:text-blue-200 transition-colors">Home</router-link>
       <router-link v-if="loggedIn" to="/my-stocks" class="hover:text-blue-200 transition-colors">My Stocks</router-link>
+      <router-link v-if="loggedIn" to="/portfolio-analysis" class="hover:text-blue-200 transition-colors">Analysis</router-link>
       <router-link v-if="loggedIn" to="/profile" class="hover:text-blue-200 transition-colors">Profile</router-link>
 
       <template v-if="loggedIn">

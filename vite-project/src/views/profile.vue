@@ -113,13 +113,35 @@ onMounted(async () => {
     // endpoint not ready yet
   }
 
-  // Fetch portfolio grading
+  // Fetch portfolio grading — send holdings to Python backend
   try {
-    const res = await fetch('http://localhost:8000/grades/')
-    if (res.ok) {
-      const data = await res.json()
-      if (data.portfolio_score !== undefined) {
-        gradeData.value = data
+    const holdingsMap = {}
+    for (const p of portfolios.value) {
+      for (const h of (p.holdings || [])) {
+        const symbol = h.symbol || h.stockId
+        if (!symbol) continue
+        if (holdingsMap[symbol]) {
+          const existing = holdingsMap[symbol]
+          const totalShares = existing.shares + h.shares
+          existing.averageCost = (existing.averageCost * existing.shares + h.averageCost * h.shares) / totalShares
+          existing.shares = totalShares
+        } else {
+          holdingsMap[symbol] = { symbol, shares: h.shares, averageCost: h.averageCost }
+        }
+      }
+    }
+    const holdings = Object.values(holdingsMap)
+    if (holdings.length) {
+      const res = await fetch('http://localhost:8000/grades/', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ holdings })
+      })
+      if (res.ok) {
+        const data = await res.json()
+        if (data.portfolio_score !== undefined) {
+          gradeData.value = data
+        }
       }
     }
   } catch {
