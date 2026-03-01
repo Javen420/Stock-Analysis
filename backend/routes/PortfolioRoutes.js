@@ -37,8 +37,9 @@ router.post("/", async (req, res) => {
 // PUT /api/portfolios/:id/holdings — add or remove a stock from holdings
 router.put("/:id/holdings", async (req, res) => {
   try {
-    const { stockId, shares, averageCost, action } = req.body;
-    if (!stockId) return res.status(400).json({ error: "Missing stockId" });
+    const { stockId, symbol, shares, averageCost, action } = req.body;
+    if (!stockId && !symbol)
+      return res.status(400).json({ error: "Missing stockId or symbol" });
 
     const portfolio = await Portfolio.findOne({
       _id: req.params.id,
@@ -47,14 +48,15 @@ router.put("/:id/holdings", async (req, res) => {
     if (!portfolio)
       return res.status(404).json({ error: "Portfolio not found" });
 
+    // Match by symbol first, then stockId
+    const matchHolding = (h) =>
+      (symbol && h.symbol === symbol.toUpperCase()) ||
+      (stockId && h.stockId && h.stockId.toString() === stockId);
+
     if (action === "remove") {
-      portfolio.holdings = portfolio.holdings.filter(
-        (h) => h.stockId.toString() !== stockId
-      );
+      portfolio.holdings = portfolio.holdings.filter((h) => !matchHolding(h));
     } else {
-      const existing = portfolio.holdings.find(
-        (h) => h.stockId.toString() === stockId
-      );
+      const existing = portfolio.holdings.find(matchHolding);
       if (existing) {
         if (shares != null) existing.shares = shares;
         if (averageCost != null) existing.averageCost = averageCost;
@@ -63,7 +65,10 @@ router.put("/:id/holdings", async (req, res) => {
           return res
             .status(400)
             .json({ error: "Missing shares or averageCost" });
-        portfolio.holdings.push({ stockId, shares, averageCost });
+        const holding = { shares, averageCost };
+        if (symbol) holding.symbol = symbol.toUpperCase();
+        if (stockId) holding.stockId = stockId;
+        portfolio.holdings.push(holding);
       }
     }
 

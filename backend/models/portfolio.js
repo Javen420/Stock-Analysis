@@ -1,11 +1,11 @@
 import mongoose from "mongoose";
 
 const PortfolioStockSchema = new mongoose.Schema({
-  stockId: { 
+  stockId: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: "Stock",
-    required: true
+    ref: "Stock"
   },
+  symbol: { type: String },
   shares: { type: Number, required: true },
   averageCost: { type: Number, required: true }
 }, { _id: false });
