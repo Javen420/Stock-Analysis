@@ -29,5 +29,9 @@ def get_stock(symbol: str):
     return {
         "symbol": symbol,
         "name": stock["name"],
+        "sector": stock.get("sector"),
+        "industry": stock.get("industry"),
+        "exchange": stock.get("exchange"),
+        "description": stock.get("description"),
         "prices": prices
     }
