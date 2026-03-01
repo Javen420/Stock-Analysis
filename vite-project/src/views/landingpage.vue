@@ -45,8 +45,11 @@
 
 <script setup>
 import { ref, onMounted } from 'vue'
+import { useRouter } from 'vue-router'
 import Search from '../components/search.vue'
 import StockCard from '../components/StockCard.vue'
+
+const router = useRouter()
 
 const loggedIn = ref(false)
 const portfolios = ref([])
@@ -70,7 +73,6 @@ onMounted(async () => {
 })
 
 function goToStock(symbol) {
-  // For now just scroll or could navigate to a stock detail page later
-  console.log('Selected stock:', symbol)
+  router.push(`/stock/${symbol}`)
 }
 </script>

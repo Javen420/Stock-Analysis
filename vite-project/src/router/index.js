@@ -3,12 +3,14 @@ import LandingPage from '../views/LandingPage.vue'
 import MyStocks from '../views/my_stocks.vue'
 import Profile from '../views/profile.vue'
 import PortfolioAnalysis from '../views/portfolio_analysis.vue'
+import StockDetail from '../views/stock_detail.vue'
 
 const routes = [
   { path: '/', name: 'LandingPage', component: LandingPage },
   { path: '/my-stocks', name: 'MyStocks', component: MyStocks },
   { path: '/profile', name: 'Profile', component: Profile },
-  { path: '/portfolio-analysis', name: 'PortfolioAnalysis', component: PortfolioAnalysis }
+  { path: '/portfolio-analysis', name: 'PortfolioAnalysis', component: PortfolioAnalysis },
+  { path: '/stock/:symbol', name: 'StockDetail', component: StockDetail }
 ]
 
 const router = createRouter({

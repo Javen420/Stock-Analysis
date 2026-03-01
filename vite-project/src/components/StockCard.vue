@@ -1,5 +1,5 @@
 <template>
-  <div class="bg-white rounded-xl shadow border border-slate-200 p-4">
+  <router-link :to="`/stock/${symbol}`" class="block bg-white rounded-xl shadow border border-slate-200 p-4 hover:shadow-md transition-shadow cursor-pointer">
     <template v-if="loading">
       <div class="animate-pulse space-y-3">
         <div class="h-5 bg-slate-200 rounded w-1/2"></div>
@@ -35,7 +35,7 @@
         <p class="text-sm text-slate-400">{{ error }}</p>
       </div>
     </template>
-  </div>
+  </router-link>
 </template>
 
 <script setup>
