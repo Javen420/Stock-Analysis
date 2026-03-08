@@ -23,7 +23,10 @@ def get_stock(symbol: str):
 
     # 2️⃣ Get price history from Mongo
     prices_cursor = prices_collection.find({"symbol": symbol}).sort("date", -1)
-    prices = [{"date": p["date"], "price": p["price"]} for p in prices_cursor]
+    prices = [
+        {"date": p["date"].strftime("%Y-%m-%d") if hasattr(p["date"], "strftime") else p["date"], "price": p["price"]}
+        for p in prices_cursor
+    ]
 
     # 3️⃣ Return both stock info and prices
     return {

@@ -26,8 +26,10 @@ def _ensure_stock_data(symbol: str):
     if not stocks_col.find_one({"symbol": symbol}):
         try:
             fetch_and_store_stock(symbol)
-        except (ValueError, Exception):
-            pass  # skip stocks that can't be fetched
+        except ValueError as e:
+            print(f"[WARN] Could not fetch stock data for {symbol}: {e}")
+        except Exception as e:
+            print(f"[ERROR] Unexpected error fetching {symbol}: {e}")
 
 
 def _get_latest_price(symbol: str) -> float | None:

@@ -1,4 +1,5 @@
 import os
+from datetime import datetime
 import requests
 from dotenv import load_dotenv
 
@@ -59,11 +60,12 @@ def fetch_and_store_stock(symbol: str) -> int:
         raise ValueError(f"No price data returned for '{symbol}'. May be a rate-limit issue.")
 
     for date_str, ohlcv in time_series.items():
+        date_obj = datetime.strptime(date_str, "%Y-%m-%d")
         prices_col.update_one(
-            {"symbol": symbol, "date": date_str},
+            {"symbol": symbol, "date": date_obj},
             {"$set": {
                 "symbol": symbol,
-                "date": date_str,
+                "date": date_obj,
                 "price": float(ohlcv["4. close"]),
                 "open": float(ohlcv["1. open"]),
                 "high": float(ohlcv["2. high"]),
