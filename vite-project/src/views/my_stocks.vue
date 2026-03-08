@@ -13,6 +13,8 @@
 
         <div v-if="loadingPortfolios" class="text-slate-400 text-sm">Loading portfolios...</div>
 
+        <div v-else-if="portfolioError" class="px-4 py-3 bg-red-50 text-red-600 rounded-lg text-sm">{{ portfolioError }}</div>
+
         <div v-else-if="portfolios.length" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
           <div
             v-for="portfolio in portfolios"
@@ -50,6 +52,8 @@
 
         <div v-if="loadingWatchlist" class="text-slate-400 text-sm">Loading watchlist...</div>
 
+        <div v-else-if="watchlistError" class="px-4 py-3 bg-red-50 text-red-600 rounded-lg text-sm">{{ watchlistError }}</div>
+
         <div v-else-if="watchlist.length" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
           <StockCard
             v-for="symbol in watchlist"
@@ -75,6 +79,8 @@ const portfolios = ref([])
 const watchlist = ref([])
 const loadingPortfolios = ref(true)
 const loadingWatchlist = ref(true)
+const portfolioError = ref('')
+const watchlistError = ref('')
 
 onMounted(async () => {
   const token = localStorage.getItem('token')
@@ -92,9 +98,12 @@ onMounted(async () => {
     const res = await fetch('http://localhost:5000/api/portfolios', { headers })
     if (res.ok) {
       portfolios.value = await res.json()
+    } else {
+      portfolioError.value = 'Failed to load portfolios.'
     }
-  } catch {
-    // endpoint not ready yet
+  } catch (err) {
+    portfolioError.value = 'Could not connect to server.'
+    console.error('Failed to fetch portfolios:', err)
   } finally {
     loadingPortfolios.value = false
   }
@@ -106,9 +115,12 @@ onMounted(async () => {
     if (res.ok) {
       const data = await res.json()
       watchlist.value = data.watchlist || []
+    } else {
+      watchlistError.value = 'Failed to load watchlist.'
     }
-  } catch {
-    // endpoint not ready yet
+  } catch (err) {
+    watchlistError.value = 'Could not connect to server.'
+    console.error('Failed to fetch watchlist:', err)
   } finally {
     loadingWatchlist.value = false
   }

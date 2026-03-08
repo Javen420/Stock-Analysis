@@ -6,6 +6,9 @@ const router = Router();
 // GET /api/users/:id/watchlist
 router.get("/:id/watchlist", async (req, res) => {
   try {
+    if (req.user.id !== req.params.id)
+      return res.status(403).json({ error: "Not authorized" });
+
     const user = await User.findById(req.params.id).select("watchlist");
     if (!user) return res.status(404).json({ error: "User not found" });
     res.json({ watchlist: user.watchlist });
@@ -18,6 +21,9 @@ router.get("/:id/watchlist", async (req, res) => {
 // PUT /api/users/:id/watchlist
 router.put("/:id/watchlist", async (req, res) => {
   try {
+    if (req.user.id !== req.params.id)
+      return res.status(403).json({ error: "Not authorized" });
+
     const { ticker, action } = req.body;
     if (!ticker) return res.status(400).json({ error: "Missing ticker" });
 

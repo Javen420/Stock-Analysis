@@ -35,8 +35,11 @@ app.post("/api/signup", async (req, res) => {
     if (!username || !email || !password)
       return res.status(400).json({ error: "Missing required fields" });
 
-    const exists = await User.findOne({ $or: [{ username }, { email }] });
-    if (exists) return res.status(409).json({ error: "Username or email already taken" });
+    const existingUser = await User.findOne({ username });
+    if (existingUser) return res.status(409).json({ error: "Username already taken" });
+
+    const existingEmail = await User.findOne({ email });
+    if (existingEmail) return res.status(409).json({ error: "Email already taken" });
 
     const user = await User.create({ username, email, password });
 

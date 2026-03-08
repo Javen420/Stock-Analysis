@@ -63,8 +63,9 @@ onMounted(async () => {
       return
     }
     stock.value = await res.json()
-  } catch {
+  } catch (err) {
     error.value = `Could not load ${props.symbol}`
+    console.error(`Failed to fetch stock ${props.symbol}:`, err)
   } finally {
     loading.value = false
   }

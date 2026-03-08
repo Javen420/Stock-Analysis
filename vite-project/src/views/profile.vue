@@ -13,6 +13,14 @@
         <p class="text-sm text-slate-500">{{ user.email }}</p>
       </section>
 
+      <!-- Loading -->
+      <div v-if="loading" class="text-center py-12">
+        <p class="text-slate-400">Loading profile data...</p>
+      </div>
+
+      <!-- Error -->
+      <div v-if="error" class="mb-6 px-4 py-3 bg-red-50 text-red-600 rounded-lg text-sm">{{ error }}</div>
+
       <!-- Stats Cards -->
       <section class="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-8">
         <div class="bg-white rounded-xl shadow border border-slate-200 p-4 text-center">
@@ -73,6 +81,8 @@ const user = ref({})
 const portfolios = ref([])
 const watchlistCount = ref(0)
 const gradeData = ref(null)
+const loading = ref(true)
+const error = ref('')
 
 const totalHoldings = computed(() => {
   return portfolios.value.reduce((sum, p) => sum + (p.holdings?.length || 0), 0)
@@ -85,7 +95,10 @@ const gradeScore = computed(() => {
 onMounted(async () => {
   const token = localStorage.getItem('token')
   const stored = JSON.parse(localStorage.getItem('user') || '{}')
-  if (!token || !stored.id) return
+  if (!token || !stored.id) {
+    loading.value = false
+    return
+  }
 
   loggedIn.value = true
   user.value = stored
@@ -97,9 +110,12 @@ onMounted(async () => {
     const res = await fetch('http://localhost:5000/api/portfolios', { headers })
     if (res.ok) {
       portfolios.value = await res.json()
+    } else {
+      error.value = 'Failed to load portfolios.'
     }
-  } catch {
-    // endpoint not ready yet
+  } catch (err) {
+    error.value = 'Could not connect to server.'
+    console.error('Failed to fetch portfolios:', err)
   }
 
   // Fetch watchlist count
@@ -109,8 +125,8 @@ onMounted(async () => {
       const data = await res.json()
       watchlistCount.value = data.watchlist?.length || 0
     }
-  } catch {
-    // endpoint not ready yet
+  } catch (err) {
+    console.error('Failed to fetch watchlist:', err)
   }
 
   // Fetch portfolio grading — send holdings to Python backend
@@ -144,8 +160,10 @@ onMounted(async () => {
         }
       }
     }
-  } catch {
-    // endpoint not ready yet
+  } catch (err) {
+    console.error('Failed to fetch portfolio grade:', err)
+  } finally {
+    loading.value = false
   }
 })
 </script>

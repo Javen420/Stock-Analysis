@@ -262,8 +262,8 @@ onMounted(async () => {
       if (pfRes.ok) {
         portfolios.value = await pfRes.json()
       }
-    } catch {
-      // ignore
+    } catch (err) {
+      console.error('Failed to fetch user data:', err)
     }
   }
 })

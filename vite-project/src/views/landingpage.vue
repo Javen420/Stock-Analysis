@@ -11,6 +11,9 @@
       <Search @select="goToStock" />
     </section>
 
+    <!-- Error Banner -->
+    <div v-if="error" class="mb-6 px-4 py-3 bg-red-50 text-red-600 rounded-lg text-sm">{{ error }}</div>
+
     <!-- Quick Stats (logged-in users) -->
     <section v-if="loggedIn && portfolios.length" class="mb-10">
       <h2 class="text-xl font-semibold text-slate-700 mb-4">Your Portfolios</h2>
@@ -54,6 +57,7 @@ const router = useRouter()
 const loggedIn = ref(false)
 const portfolios = ref([])
 const featuredSymbols = ref(['AAPL', 'MSFT', 'GOOGL'])
+const error = ref('')
 
 onMounted(async () => {
   const token = localStorage.getItem('token')
@@ -65,9 +69,12 @@ onMounted(async () => {
       })
       if (res.ok) {
         portfolios.value = await res.json()
+      } else {
+        console.warn('Failed to load portfolios:', res.status)
       }
-    } catch {
-      // backend not running or endpoint not ready yet
+    } catch (err) {
+      error.value = 'Could not connect to server.'
+      console.error('Failed to fetch portfolios:', err)
     }
   }
 })
