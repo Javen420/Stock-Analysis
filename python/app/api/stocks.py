@@ -2,6 +2,8 @@
 from fastapi import APIRouter, HTTPException
 from app.core.mongo import db
 from app.services.stock_api import fetch_and_store_stock
+from app.services.technicals import TechnicalsCalculator
+from app.services.cache import is_stale
 
 router = APIRouter()
 
@@ -38,3 +40,47 @@ def get_stock(symbol: str):
         "description": stock.get("description"),
         "prices": prices
     }
+
+
+@router.get("/{symbol}/technicals")
+def get_technicals(symbol: str):
+    symbol = symbol.upper()
+
+    stock = stocks_collection.find_one({"symbol": symbol})
+    if not stock:
+        raise HTTPException(status_code=404, detail=f"Ticker '{symbol}' not found")
+
+    calc = TechnicalsCalculator(symbol)
+
+    # Return cached data if fresh, otherwise recompute
+    cached = calc.get_cached()
+    if cached and not is_stale(cached.get("lastUpdated")):
+        cached.pop("_id", None)
+        cached.pop("stockId", None)
+        return {"symbol": symbol, **_serialize(cached)}
+
+    result = calc.compute()
+    if not result:
+        raise HTTPException(status_code=500, detail="Failed to compute technicals")
+
+    result.pop("_id", None)
+    result.pop("stockId", None)
+    return {"symbol": symbol, **_serialize(result)}
+
+
+def _serialize(doc: dict) -> dict:
+    """Convert ObjectId/datetime fields to JSON-safe types."""
+    from bson import ObjectId
+    from datetime import datetime
+
+    out = {}
+    for k, v in doc.items():
+        if isinstance(v, ObjectId):
+            out[k] = str(v)
+        elif isinstance(v, datetime):
+            out[k] = v.isoformat()
+        elif isinstance(v, dict):
+            out[k] = _serialize(v)
+        else:
+            out[k] = v
+    return out

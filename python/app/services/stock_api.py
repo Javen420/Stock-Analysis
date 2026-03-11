@@ -32,6 +32,14 @@ def fetch_and_store_stock(symbol: str) -> int:
     if not overview.get("Symbol"):
         raise ValueError(f"No overview data found for '{symbol}'. Check the ticker or your API key.")
 
+    def _safe_float(val):
+        if val is None or val == "None" or val == "" or val == "-":
+            return None
+        try:
+            return float(val)
+        except (ValueError, TypeError):
+            return None
+
     stocks_col.update_one(
         {"symbol": symbol},
         {"$set": {
@@ -41,6 +49,16 @@ def fetch_and_store_stock(symbol: str) -> int:
             "sector": overview.get("Sector"),
             "industry": overview.get("Industry"),
             "description": overview.get("Description"),
+            "pe": _safe_float(overview.get("PERatio")),
+            "eps": _safe_float(overview.get("EPS")),
+            "pb": _safe_float(overview.get("PriceToBookRatio")),
+            "fcf": _safe_float(overview.get("OperatingCashflow")),
+            "dividendYield": _safe_float(overview.get("DividendYield")),
+            "revenueGrowth": _safe_float(overview.get("QuarterlyRevenueGrowthYOY")),
+            "profitMargin": _safe_float(overview.get("ProfitMargin")),
+            "debtToEquity": _safe_float(overview.get("DebtToEquityRatio")),
+            "roe": _safe_float(overview.get("ReturnOnEquityTTM")),
+            "roa": _safe_float(overview.get("ReturnOnAssetsTTM")),
         }},
         upsert=True,
     )
