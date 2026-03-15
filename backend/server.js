@@ -12,10 +12,18 @@ import stockRoutes from "./routes/StockRoutes.js";
 dotenv.config();
 
 const app = express();
-app.use(cors());
+app.use(cors({
+  origin: ["http://localhost:5173"],
+  methods: ["GET", "POST", "PUT", "DELETE"],
+  allowedHeaders: ["Content-Type", "Authorization"],
+}));
 app.use(express.json());
 
-const JWT_SECRET = process.env.JWT_SECRET || "dev_secret_replace_in_prod";
+if (!process.env.JWT_SECRET) {
+  console.error("JWT_SECRET environment variable is required");
+  process.exit(1);
+}
+const JWT_SECRET = process.env.JWT_SECRET;
 
 function auth(req, res, next) {
   const hdr = req.headers.authorization;
@@ -35,6 +43,11 @@ app.post("/api/signup", async (req, res) => {
     if (!username || !email || !password)
       return res.status(400).json({ error: "Missing required fields" });
 
+    if (password.length < 8)
+      return res.status(400).json({ error: "Password must be at least 8 characters" });
+    if (!/[A-Z]/.test(password) || !/[a-z]/.test(password) || !/[0-9]/.test(password))
+      return res.status(400).json({ error: "Password must include uppercase, lowercase, and a number" });
+
     const existingUser = await User.findOne({ username });
     if (existingUser) return res.status(409).json({ error: "Username already taken" });
 
@@ -43,7 +56,7 @@ app.post("/api/signup", async (req, res) => {
 
     const user = await User.create({ username, email, password });
 
-    const token = jwt.sign({ id: user._id, username: user.username }, JWT_SECRET, { expiresIn: "8h" });
+    const token = jwt.sign({ id: user._id, username: user.username }, JWT_SECRET, { expiresIn: "1h" });
     res.status(201).json({ token, user: { id: user._id, username: user.username, email: user.email } });
   } catch (err) {
     console.error(err);
@@ -63,7 +76,7 @@ app.post("/api/login", async (req, res) => {
     const match = await bcrypt.compare(password, user.password);
     if (!match) return res.status(401).json({ error: "Invalid credentials" });
 
-    const token = jwt.sign({ id: user._id, username: user.username }, JWT_SECRET, { expiresIn: "8h" });
+    const token = jwt.sign({ id: user._id, username: user.username }, JWT_SECRET, { expiresIn: "1h" });
     res.json({ token, user: { id: user._id, username: user.username, email: user.email } });
   } catch (err) {
     console.error(err);
