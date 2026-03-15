@@ -1,4 +1,5 @@
 # app/api/stocks.py
+import re
 from fastapi import APIRouter, HTTPException
 from app.core.mongo import db
 from app.services.stock_api import fetch_and_store_stock
@@ -10,9 +11,18 @@ router = APIRouter()
 prices_collection = db["stock_prices"]
 stocks_collection = db["stocks"]
 
+SYMBOL_PATTERN = re.compile(r"^[A-Za-z]{1,5}$")
+
+
+def _validate_symbol(symbol: str) -> str:
+    if not SYMBOL_PATTERN.match(symbol):
+        raise HTTPException(status_code=400, detail="Invalid ticker symbol")
+    return symbol.upper()
+
+
 @router.get("/{symbol}")
 def get_stock(symbol: str):
-    symbol = symbol.upper()
+    symbol = _validate_symbol(symbol)
 
     # 1️⃣ Get stock info, auto-fetch from Alpha Vantage if not in DB
     stock = stocks_collection.find_one({"symbol": symbol})
@@ -44,7 +54,7 @@ def get_stock(symbol: str):
 
 @router.get("/{symbol}/technicals")
 def get_technicals(symbol: str):
-    symbol = symbol.upper()
+    symbol = _validate_symbol(symbol)
 
     stock = stocks_collection.find_one({"symbol": symbol})
     if not stock:

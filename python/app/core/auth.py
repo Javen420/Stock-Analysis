@@ -5,7 +5,9 @@ from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 
 security = HTTPBearer()
 
-JWT_SECRET = os.getenv("JWT_SECRET", "dev_secret_replace_in_prod")
+JWT_SECRET = os.getenv("JWT_SECRET")
+if not JWT_SECRET:
+    raise RuntimeError("JWT_SECRET environment variable is required")
 
 
 def require_auth(credentials: HTTPAuthorizationCredentials = Depends(security)):
