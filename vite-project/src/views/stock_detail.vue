@@ -233,7 +233,10 @@ onMounted(async () => {
 
   // Fetch stock data
   try {
-    const res = await fetch(`http://localhost:8000/stocks/${symbolParam}`)
+    const token = localStorage.getItem('token')
+    const res = await fetch(`http://localhost:8000/stocks/${symbolParam}`, {
+      headers: { 'Authorization': `Bearer ${token}` }
+    })
     if (!res.ok) {
       const data = await res.json().catch(() => ({}))
       error.value = data.detail || `Ticker "${symbolParam}" not found`
