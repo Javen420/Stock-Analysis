@@ -1,6 +1,7 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, Depends
 from fastapi.middleware.cors import CORSMiddleware
 from app.api import stocks, grades
+from app.core.auth import require_auth
 
 app = FastAPI()
 
@@ -11,7 +12,7 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-app.include_router(stocks.router, prefix="/stocks")
-app.include_router(grades.router, prefix="/grades")
+app.include_router(stocks.router, prefix="/stocks", dependencies=[Depends(require_auth)])
+app.include_router(grades.router, prefix="/grades", dependencies=[Depends(require_auth)])
 
 

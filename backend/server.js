@@ -74,7 +74,7 @@ app.post("/api/login", async (req, res) => {
 // Mount route modules
 app.use("/api/users", auth, userRoutes);
 app.use("/api/portfolios", auth, portfolioRoutes);
-app.use("/api/stocks", stockRoutes);
+app.use("/api/stocks", auth, stockRoutes);
 
 // connect to Mongo and start server
 async function start() {
