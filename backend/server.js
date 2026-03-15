@@ -9,7 +9,7 @@ import userRoutes from "./routes/UserRoutes.js";
 import portfolioRoutes from "./routes/PortfolioRoutes.js";
 import stockRoutes from "./routes/StockRoutes.js";
 
-dotenv.config();
+dotenv.config({ path: "../.env" });
 
 const app = express();
 app.use(cors({
@@ -92,7 +92,7 @@ app.use("/api/stocks", auth, stockRoutes);
 // connect to Mongo and start server
 async function start() {
   try {
-    await mongoose.connect(process.env.MONGO_URL);
+    await mongoose.connect(process.env.MONGO_URI);
     console.log("✅ MongoDB Connected");
     const PORT = process.env.PORT || 5000;
     app.listen(PORT, () => {

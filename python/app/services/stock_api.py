@@ -1,9 +1,6 @@
 import os
 from datetime import datetime
 import requests
-from dotenv import load_dotenv
-
-load_dotenv()
 from app.core.mongo import db
 
 AV_API_KEY = os.getenv("ALPHA_VANTAGE_KEY", "demo")
