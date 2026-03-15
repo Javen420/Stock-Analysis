@@ -26,6 +26,8 @@ router.put("/:id/watchlist", async (req, res) => {
 
     const { ticker, action } = req.body;
     if (!ticker) return res.status(400).json({ error: "Missing ticker" });
+    if (!/^[A-Za-z]{1,5}$/.test(ticker))
+      return res.status(400).json({ error: "Invalid ticker symbol" });
 
     const user = await User.findById(req.params.id);
     if (!user) return res.status(404).json({ error: "User not found" });

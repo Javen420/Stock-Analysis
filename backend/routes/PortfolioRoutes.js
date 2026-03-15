@@ -19,6 +19,10 @@ router.post("/", async (req, res) => {
   try {
     const { name, description } = req.body;
     if (!name) return res.status(400).json({ error: "Missing portfolio name" });
+    if (name.length > 100)
+      return res.status(400).json({ error: "Portfolio name too long (max 100 characters)" });
+    if (description && description.length > 500)
+      return res.status(400).json({ error: "Description too long (max 500 characters)" });
 
     const portfolio = await Portfolio.create({
       userId: req.user.id,
@@ -40,6 +44,12 @@ router.put("/:id/holdings", async (req, res) => {
     const { stockId, symbol, shares, averageCost, action } = req.body;
     if (!stockId && !symbol)
       return res.status(400).json({ error: "Missing stockId or symbol" });
+    if (symbol && !/^[A-Za-z]{1,5}$/.test(symbol))
+      return res.status(400).json({ error: "Invalid ticker symbol" });
+    if (shares != null && (typeof shares !== "number" || shares <= 0 || shares > 1000000))
+      return res.status(400).json({ error: "Shares must be between 0 and 1,000,000" });
+    if (averageCost != null && (typeof averageCost !== "number" || averageCost <= 0 || averageCost > 1000000))
+      return res.status(400).json({ error: "Average cost must be between 0 and 1,000,000" });
 
     const portfolio = await Portfolio.findOne({
       _id: req.params.id,

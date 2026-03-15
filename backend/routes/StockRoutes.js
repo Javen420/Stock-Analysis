@@ -6,9 +6,11 @@ const router = Router();
 // GET /api/stocks/:symbol — look up a stock by ticker symbol
 router.get("/:symbol", async (req, res) => {
   try {
-    const stock = await Stock.findOne({
-      symbol: req.params.symbol.toUpperCase(),
-    });
+    const symbol = req.params.symbol.toUpperCase();
+    if (!/^[A-Z]{1,5}$/.test(symbol))
+      return res.status(400).json({ error: "Invalid ticker symbol" });
+
+    const stock = await Stock.findOne({ symbol });
     if (!stock) return res.status(404).json({ error: "Stock not found" });
     res.json(stock);
   } catch (err) {
