@@ -190,8 +190,7 @@ onMounted(async () => {
     }
 
     // 3. Call Python analysis endpoint
-    const token = localStorage.getItem('token')
-    const analysisRes = await fetch('http://localhost:8000/grades/analysis', {
+    const analysisRes = await fetch('http://localhost:8002/grades/analysis', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
       body: JSON.stringify({ holdings })

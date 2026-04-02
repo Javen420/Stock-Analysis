@@ -58,7 +58,7 @@ const latestPrice = computed(() => {
 onMounted(async () => {
   try {
     const token = localStorage.getItem('token')
-    const res = await fetch(`http://localhost:8000/stocks/${props.symbol}`, {
+    const res = await fetch(`http://localhost:8002/stocks/${props.symbol}`, {
       headers: { 'Authorization': `Bearer ${token}` }
     })
     if (!res.ok) {

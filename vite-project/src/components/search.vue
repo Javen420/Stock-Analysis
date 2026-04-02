@@ -84,7 +84,7 @@ async function search() {
 
   try {
     const token = localStorage.getItem('token')
-    const res = await fetch(`http://localhost:8000/stocks/${symbol}`, {
+    const res = await fetch(`http://localhost:8002/stocks/${symbol}`, {
       headers: { 'Authorization': `Bearer ${token}` }
     })
     if (!res.ok) {

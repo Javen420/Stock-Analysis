@@ -1,16 +1,44 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import LandingPage from '../views/LandingPage.vue'
-import MyStocks from '../views/my_stocks.vue'
-import Profile from '../views/profile.vue'
-import PortfolioAnalysis from '../views/portfolio_analysis.vue'
-import StockDetail from '../views/stock_detail.vue'
 
 const routes = [
-  { path: '/', name: 'LandingPage', component: LandingPage },
-  { path: '/my-stocks', name: 'MyStocks', component: MyStocks },
-  { path: '/profile', name: 'Profile', component: Profile },
-  { path: '/portfolio-analysis', name: 'PortfolioAnalysis', component: PortfolioAnalysis },
-  { path: '/stock/:symbol', name: 'StockDetail', component: StockDetail }
+  {
+    path: '/',
+    name: 'Landing',
+    component: LandingPage
+  },
+  {
+    path: '/features',
+    name: 'Features',
+    component: () => import('../views/FeaturesPage.vue')
+  },
+  {
+    path: '/philosophy',
+    name: 'Philosophy',
+    component: () => import('../views/PhilosophyPage.vue')
+  },
+  {
+    path: '/protocol',
+    name: 'Protocol',
+    component: () => import('../views/ProtocolPage.vue')
+  },
+
+  // Interactive Analysis App routes
+  {
+    path: '/dashboard',
+    name: 'Dashboard',
+    component: () => import('../views/Dashboard.vue')
+  },
+  {
+    path: '/stock/:symbol',
+    name: 'StockDetail',
+    component: () => import('../views/StockDetail.vue')
+  },
+  {
+    path: '/portfolio/new',
+    name: 'CustomPortfolio',
+    component: () => import('../views/CustomPortfolio.vue')
+  }
 ]
 
 const router = createRouter({

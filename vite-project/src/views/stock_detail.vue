@@ -234,7 +234,7 @@ onMounted(async () => {
   // Fetch stock data
   try {
     const token = localStorage.getItem('token')
-    const res = await fetch(`http://localhost:8000/stocks/${symbolParam}`, {
+    const res = await fetch(`http://localhost:8002/stocks/${symbolParam}`, {
       headers: { 'Authorization': `Bearer ${token}` }
     })
     if (!res.ok) {

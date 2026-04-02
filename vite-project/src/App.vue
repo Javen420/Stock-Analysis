@@ -1,10 +1,12 @@
+<template>
+  <div class="relative min-h-screen bg-cream text-charcoal font-body">
+    <NavBar />
+    <main>
+      <router-view />
+    </main>
+  </div>
+</template>
+
 <script setup>
 import NavBar from './components/NavBar.vue'
 </script>
-
-<template>
-  <div class="min-h-screen bg-slate-50">
-    <NavBar />
-    <router-view />
-  </div>
-</template>

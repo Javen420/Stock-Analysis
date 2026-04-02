@@ -1,14 +1,167 @@
 @import "tailwindcss";
 
-body {
-  margin: 0;
-  font-family: system-ui, -apple-system, sans-serif;
-  background-color: #f8fafc;
-  color: #1e293b;
-  min-height: 100vh;
+/* ═══════════════════════════════════════════
+   QUANTALYZE — Organic Tech Design System
+   ═══════════════════════════════════════════ */
+
+@theme {
+  --color-moss: #2E4036;
+  --color-moss-light: #3d5548;
+  --color-moss-dark: #1f2d25;
+  --color-clay: #CC5833;
+  --color-clay-light: #e06a44;
+  --color-clay-dark: #a84628;
+  --color-cream: #F2F0E9;
+  --color-cream-dark: #E8E5DB;
+  --color-charcoal: #1A1A1A;
+  --color-charcoal-light: #2a2a2a;
+
+  --font-heading: "Plus Jakarta Sans", "Outfit", system-ui, sans-serif;
+  --font-drama: "Cormorant Garamond", "Georgia", serif;
+  --font-mono: "IBM Plex Mono", "Fira Code", monospace;
+  --font-body: "Outfit", "Plus Jakarta Sans", system-ui, sans-serif;
 }
 
-#app {
-  width: 100%;
-  min-height: 100vh;
+/* ── Global Reset & Base ── */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+  font-family: var(--font-body);
+}
+
+body {
+  background-color: var(--color-cream);
+  color: var(--color-charcoal);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Base Headings */
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-heading);
+}
+
+/* Noise overlay adjusted for light backgrounds */
+.bg-noise {
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.08' mix-blend-mode='multiply'/%3E%3C/svg%3E");
+  pointer-events: none;
+}
+
+::selection {
+  background-color: var(--color-clay);
+  color: var(--color-cream);
+}
+
+/* ── Scrollbar ── */
+::-webkit-scrollbar {
+  width: 8px;
+}
+::-webkit-scrollbar-track {
+  background: var(--color-cream-dark);
+}
+::-webkit-scrollbar-thumb {
+  background: var(--color-moss);
+  border-radius: 99px;
+}
+
+/* ── Typography Utilities ── */
+.font-heading {
+  font-family: var(--font-heading);
+  letter-spacing: -0.03em;
+}
+
+.font-drama {
+  font-family: var(--font-drama);
+  font-style: italic;
+}
+
+.font-mono {
+  font-family: var(--font-mono);
+}
+
+.font-body {
+  font-family: var(--font-body);
+}
+
+/* ── Magnetic Button ── */
+.btn-magnetic {
+  position: relative;
+  overflow: hidden;
+  transition: transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+.btn-magnetic:hover {
+  transform: scale(1.03);
+}
+.btn-magnetic .btn-bg {
+  position: absolute;
+  inset: 0;
+  transform: translateY(100%);
+  transition: transform 0.45s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  z-index: 0;
+}
+.btn-magnetic:hover .btn-bg {
+  transform: translateY(0);
+}
+.btn-magnetic .btn-content {
+  position: relative;
+  z-index: 1;
+}
+
+/* ── Interactive Lift ── */
+.hover-lift {
+  transition: transform 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+.hover-lift:hover {
+  transform: translateY(-2px);
+}
+
+/* ── Card System ── */
+.card-organic {
+  border-radius: 2rem;
+  border: 1px solid rgba(46, 64, 54, 0.1);
+  box-shadow: 0 4px 24px rgba(26, 26, 26, 0.04);
+  transition: box-shadow 0.4s ease, transform 0.4s ease;
+}
+.card-organic:hover {
+  box-shadow: 0 8px 40px rgba(26, 26, 26, 0.08);
+  transform: translateY(-4px);
+}
+
+/* ── Pulsing Dot ── */
+@keyframes pulse-dot {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.5; transform: scale(1.5); }
+}
+.pulse-dot {
+  animation: pulse-dot 2s ease-in-out infinite;
+}
+
+/* ── Typewriter Cursor ── */
+@keyframes blink-cursor {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0; }
+}
+.blink-cursor {
+  animation: blink-cursor 0.8s step-end infinite;
+}
+
+/* ── Parallax Texture ── */
+.parallax-bg {
+  will-change: transform;
+  transition: transform 0.1s linear;
+}
+
+/* ── Section Spacing ── */
+.section-pad {
+  padding: 8rem 2rem;
+}
+@media (max-width: 768px) {
+  .section-pad {
+    padding: 4rem 1.25rem;
+  }
 }

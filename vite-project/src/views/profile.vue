@@ -148,8 +148,7 @@ onMounted(async () => {
     }
     const holdings = Object.values(holdingsMap)
     if (holdings.length) {
-      const token = localStorage.getItem('token')
-      const res = await fetch('http://localhost:8000/grades/', {
+      const res = await fetch('http://localhost:8002/grades/', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
         body: JSON.stringify({ holdings })

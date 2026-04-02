@@ -1,85 +1,45 @@
 <template>
-  <div class="max-w-5xl mx-auto px-4 py-8">
-    <!-- Hero Section -->
-    <section class="text-center py-12">
-      <h1 class="text-4xl font-bold text-blue-800 mb-4">Stock Finder</h1>
-      <p class="text-lg text-slate-600 mb-8">
-        Search, analyze, and grade stocks. Build portfolios and track your investments.
-      </p>
+  <div class="bg-cream">
+    <!-- ═══ HERO ═══ -->
+    <HeroSection />
 
-      <!-- Search Bar -->
-      <Search @select="goToStock" />
-    </section>
-
-    <!-- Error Banner -->
-    <div v-if="error" class="mb-6 px-4 py-3 bg-red-50 text-red-600 rounded-lg text-sm">{{ error }}</div>
-
-    <!-- Quick Stats (logged-in users) -->
-    <section v-if="loggedIn && portfolios.length" class="mb-10">
-      <h2 class="text-xl font-semibold text-slate-700 mb-4">Your Portfolios</h2>
-      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-        <div
-          v-for="portfolio in portfolios"
-          :key="portfolio._id"
-          class="bg-white rounded-xl shadow p-4 border border-slate-200"
-        >
-          <h3 class="font-semibold text-blue-700">{{ portfolio.name }}</h3>
-          <p class="text-sm text-slate-500">{{ portfolio.description || 'No description' }}</p>
-          <p class="text-sm text-slate-400 mt-2">
-            {{ portfolio.holdings?.length || 0 }} holdings
-          </p>
+    <!-- ═══ EXPANDED LANDING TEASER ═══ -->
+    <section class="w-full max-w-[1920px] mx-auto px-6 md:px-12 2xl:px-24 pb-32 pt-16">
+      <!-- Trusted By / Value Prop -->
+      <div class="border-y border-charcoal/10 py-16 text-center space-y-6 mb-32 hidden md:block">
+        <p class="font-mono text-sm uppercase tracking-widest text-charcoal/40 font-bold mb-8">Integrated Data Providers</p>
+        <div class="flex flex-wrap justify-center items-center gap-12 md:gap-24 opacity-40 grayscale">
+          <div class="font-heading font-black text-2xl tracking-tighter">DATA<span class="font-drama italic font-normal">stream</span></div>
+          <div class="font-mono text-xl font-bold tracking-widest">QUANT//NET</div>
+          <div class="font-body text-2xl font-bold">Alpaca</div>
+          <div class="font-heading font-bold text-2xl">Polygon.io</div>
         </div>
       </div>
-    </section>
 
-    <!-- Featured / Example Stocks -->
-    <section>
-      <h2 class="text-xl font-semibold text-slate-700 mb-4">Popular Stocks</h2>
-      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-        <StockCard
-          v-for="symbol in featuredSymbols"
-          :key="symbol"
-          :symbol="symbol"
-        />
+      <!-- Mini Vision UNBOXED -->
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-16 md:gap-24 items-center">
+        <div class="space-y-8 order-2 lg:order-1">
+          <span class="font-mono text-xs text-moss uppercase tracking-widest font-bold bg-moss/10 px-3 py-1 rounded-full text-moss">The Edge</span>
+          <h2 class="font-heading font-bold text-4xl md:text-6xl text-charcoal tracking-tight leading-[1]">Stop guessing.<br />Start knowing.</h2>
+          <p class="text-xl text-charcoal/50 leading-relaxed max-w-lg">
+            Stop relying on scattered spreadsheets and delayed financial news. We bring Wall Street's quantitative muscle directly to your browser.
+          </p>
+          <router-link to="/features" class="inline-flex items-center gap-2 font-mono font-bold text-clay uppercase tracking-widest text-sm hover:text-clay-dark transition-colors group pb-1 border-b border-clay/30 hover:border-clay">
+            Explore Capabilities
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="transform group-hover:translate-x-1 transition-transform"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+          </router-link>
+        </div>
+        
+        <!-- Massive visual representation -->
+        <div class="order-1 lg:order-2 w-full aspect-[4/3] rounded-[3rem] overflow-hidden shadow-2xl relative group">
+          <div class="absolute inset-0 bg-charcoal/10 mix-blend-multiply group-hover:opacity-0 transition-opacity duration-700 z-10"></div>
+          <img src="https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&w=1200&q=80" alt="Analytical Terminal View" class="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-1000 ease-out" />
+        </div>
       </div>
     </section>
   </div>
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue'
-import { useRouter } from 'vue-router'
-import Search from '../components/search.vue'
-import StockCard from '../components/StockCard.vue'
-
-const router = useRouter()
-
-const loggedIn = ref(false)
-const portfolios = ref([])
-const featuredSymbols = ref(['AAPL', 'MSFT', 'GOOGL'])
-const error = ref('')
-
-onMounted(async () => {
-  const token = localStorage.getItem('token')
-  if (token) {
-    loggedIn.value = true
-    try {
-      const res = await fetch('http://localhost:5000/api/portfolios', {
-        headers: { Authorization: `Bearer ${token}` }
-      })
-      if (res.ok) {
-        portfolios.value = await res.json()
-      } else {
-        console.warn('Failed to load portfolios:', res.status)
-      }
-    } catch (err) {
-      error.value = 'Could not connect to server.'
-      console.error('Failed to fetch portfolios:', err)
-    }
-  }
-})
-
-function goToStock(symbol) {
-  router.push(`/stock/${symbol}`)
-}
+import HeroSection from '../components/HeroSection.vue'
 </script>
